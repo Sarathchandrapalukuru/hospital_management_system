@@ -1,0 +1,100 @@
+--  need to update from here in the original one -- 
+
+
+
+initlize model(database) in the app.models
+        in models (binding like automatically if foreign key initilized in one reverse binding will be done by django)
+
+  in api.serializers
+
+initilize stuff
+
+  in api.views
+add queryset and class  
+
+  in api.urls
+register for frontend
+
+
+.......works perfectly......
+
+
+
+
+
+// Fetch patient data
+React.useEffect(() => {
+  const fetchData = async () => {
+    if (!transferData.patientId) {
+      setLoading(false);
+      setPatient(null);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:8000/api/patients/${transferData.patientId}/`
+      );
+      const patientData = response.data;
+      setPatient(patientData); // should contain id_from_login
+      setProfile({
+        name: patientData.name || "",
+        email: patientData.email || "",
+        phone_number: patientData.phone_number || "",
+        dob: patientData.dob || "",
+      });
+    } catch (error) {
+      console.error("Error fetching patient data:", error);
+      alert("Failed to load profile data.");
+      setPatient(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [transferData.patientId]);
+
+// Profile update
+await axios.patch(
+  `http://localhost:8000/api/patients/${patient.id_from_login}/`,
+  profile,
+  { withCredentials: true }
+);
+
+// Password update
+await axios.post(
+  `http://localhost:8000/api/patients/${patient.id_from_login}/change-password/`,
+  {
+    current_password: passwords.currentPassword,
+    new_password: passwords.newPassword,
+  },
+  { withCredentials: true }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+$headers = @{
+    "Content-Type" = "application/json"
+    "Authorization" = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYzNTE4MTE3LCJpYXQiOjE3NjM0NzQ5MTcsImp0aSI6IjBlMGYzMmRjZGQzZTQyNTlhMjNiNTJiMjIwYTVlYzRiIiwidXNlcl9pZCI6IjEyIn0.ISPbtLroTDC_-P6evSZqm2y9Ic9GMw-ZybFlwzSU5gs
+"
+}
+
+$body = @{
+    payment_id = 1
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "http://localhost:8000/api/create-payment-session/" -Method Post -Headers $headers -Body $body
+
+$response

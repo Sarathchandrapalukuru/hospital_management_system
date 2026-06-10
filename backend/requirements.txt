@@ -1,0 +1,14 @@
+Django==5.2.7
+djangorestframework==3.16.1
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+PyJWT==2.10.1
+asgiref==3.10.0
+sqlparse==0.5.3
+certifi==2025.10.5
+charset-normalizer==3.4.3
+idna==3.10
+requests==2.32.5
+tzdata==2025.2
+posts
+stripe  # for secure gateway
