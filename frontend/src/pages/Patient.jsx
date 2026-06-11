@@ -645,6 +645,7 @@ const ProfileView = () => {
     email: "",
     phone_number: "",
     dob: "",
+  
   });
   const [passwords, setPasswords] = React.useState({
     currentPassword: "",
@@ -941,12 +942,11 @@ const AppointmentModal = ({ title, onClose }) => {
     try {
       // Use the logged-in patient's profile — backend assigns patient automatically.
       const payload = {
-        department: formData.department,
-        doctor: formData.doctor,
+        department: parseInt(formData.department, 10),
+        doctor: parseInt(formData.doctor, 10),
         datetime: formData.datetime,
         reason: formData.reason,
       };
-
       const response = await api.post('appointments/', payload, {
         headers: { 'Content-Type': 'application/json' },
       });
@@ -959,9 +959,14 @@ const AppointmentModal = ({ title, onClose }) => {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      console.log(formData)
-      alert("An error occurred.");
-
+      const msg =
+        error.response?.data?.detail ||
+        error.response?.data?.patient?.[0] ||
+        error.response?.data?.doctor?.[0] ||
+        error.response?.data?.department?.[0] ||
+        JSON.stringify(error.response?.data) ||
+        "An error occurred.";
+      alert(msg);
     }
   };
 

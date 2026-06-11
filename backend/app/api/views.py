@@ -101,10 +101,8 @@ class DoctorViewSet(ModelViewSet):
         user = self.request.user
         ut = _user_type(user)
         if ut == 'admin':
-            admin = _get_admin(user)
-            if admin:
-                return Doctor.objects.filter(admin=admin)
-            return Doctor.objects.none()
+            # Hospital admin sees every doctor in the system
+            return Doctor.objects.all()
         if ut == 'doctor':
             return Doctor.objects.filter(user=user)
         if ut == 'patient':
@@ -142,10 +140,8 @@ class PatientViewSet(ModelViewSet):
         user = self.request.user
         ut = _user_type(user)
         if ut == 'admin':
-            admin = _get_admin(user)
-            if admin:
-                return Patient.objects.filter(admin=admin)
-            return Patient.objects.none()
+            # Hospital admin sees every patient in the system
+            return Patient.objects.all()
         if ut == 'patient':
             return Patient.objects.filter(user=user)
         if ut == 'doctor':
@@ -181,10 +177,7 @@ class AppointmentViewSet(ModelViewSet):
         user = self.request.user
         ut = _user_type(user)
         if ut == 'admin':
-            admin = _get_admin(user)
-            if admin:
-                return Appointment.objects.filter(admin=admin)
-            return Appointment.objects.none()
+            return Appointment.objects.all()
         if ut == 'patient':
             patient = _get_patient(user)
             if patient:
@@ -204,12 +197,23 @@ class AppointmentViewSet(ModelViewSet):
         if ut == 'patient':
             patient = _get_patient(user)
             if not patient:
-                raise PermissionDenied("Patient profile not found.")
+                # Repair accounts that have a User but no linked Patient row
+                patient = Patient.objects.create(
+                    user=user,
+                    name=user.name or user.username,
+                    email=user.email,
+                    phone_number='0000000000',
+                )
             kwargs['patient'] = patient
         elif ut == 'admin':
             admin = _get_admin(user)
-            if admin:
-                kwargs['admin'] = admin
+            if not admin:
+                raise PermissionDenied("Admin profile not found.")
+            kwargs['admin'] = admin
+            if not serializer.validated_data.get('patient'):
+                raise PermissionDenied("Patient is required when booking as admin.")
+        else:
+            raise PermissionDenied("You are not allowed to book appointments.")
         serializer.save(**kwargs)
 
 

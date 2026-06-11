@@ -643,7 +643,9 @@ const ProfileView = () => {
         if (currentDoctor) {
           setProfile({
             name: currentDoctor.name || "",
-            specialty: currentDoctor.specialty?.id || "", // store dept id
+            // API returns specialty as department id (number), not an object
+            specialty: currentDoctor.specialty != null ? String(currentDoctor.specialty) : "",
+            // email lives on the linked User row, exposed by DoctorSerializer
             email: currentDoctor.email || "",
             phone_number: currentDoctor.phone_number || "",
             dob: currentDoctor.dob || "",
@@ -676,9 +678,10 @@ const ProfileView = () => {
     if (!doctor) return;
 
     try {
-      const payload = { ...profile };
-      console.log(passwords.currentPassword)
-      console.log(doctor.password)
+      const payload = {
+        ...profile,
+        specialty: profile.specialty ? parseInt(profile.specialty, 10) : null,
+      };
 
       if (String(passwords.currentPassword) == String(doctor.password)) {
         if (passwords.newPassword)
@@ -698,6 +701,7 @@ const ProfileView = () => {
 
   if (loading) return <p>Loading profile...</p>;
   if (!doctor) return <p>No doctor found.</p>;
+  // console.log(profile)
 
   return (
     <section>

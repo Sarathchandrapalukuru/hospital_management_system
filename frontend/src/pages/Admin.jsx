@@ -409,7 +409,8 @@ const DoctorsView = ({ onAddDoctor }) => {
                   <th>Doctor</th>
                   <th>Specialty</th>
                   <th>Department</th>
-                  <th>Contact</th>
+                  <th>Email</th>
+                  <th>Phone</th>
                   {/* <th>Status</th> */}
                 </tr>
               </thead>
@@ -425,9 +426,10 @@ const DoctorsView = ({ onAddDoctor }) => {
                           <div>{doc.name}</div>
                         </div>
                       </td>
-                      <td>{doc.specialty_name || 'DOCTOR'}</td> 
-                      <td>{departments[doc.specialty] || 'N/A'}</td> {/* Mapping department ID to name */}
-                      <td>{doc.phone_number}</td>
+                      <td>{doc.specialty_name || '—'}</td>
+                      <td>{departments[doc.specialty] || 'N/A'}</td>
+                      <td>{doc.email || '—'}</td>
+                      <td>{doc.phone_number || '—'}</td>
                       {/* <td>
                         <span className={`status-badge ${doc.status === 'Active' ? 'status-active' : 'status-on-leave'}`}>
                           {doc.status}
@@ -484,9 +486,8 @@ const PatientsView = () => {
               <tr>
                 <th>Patient ID</th>
                 <th>Patient Name</th>
-                {/* <th>Assigned Doctor(s)</th> */}
-                {/* <th>Last Visit</th> */}
-                {/* <th>Status</th> */}
+                <th>Email</th>
+                <th>Phone</th>
               </tr>
             </thead>
             <tbody>
@@ -497,17 +498,8 @@ const PatientsView = () => {
                   <tr key={patient.id_from_login}>
                     <td>#{patient.id_from_login.toString().padStart(5, '0')}</td>
                     <td>{patient.name}</td>
-                    {/* <td>
-                      {patient.doctors && patient.doctors.length > 0
-                        ? patient.doctors.map(doc => doc.name).join(', ')
-                        : 'No doctor assigned'}
-                    </td> */}
-                    {/* <td>{patient.last_visit || 'N/A'}</td> */}
-                    <td>
-                      {/* <span className={`status-badge status-${patient.status.replace(' ', '-').toLowerCase()}`}>
-                        {patient.status}
-                      </span> */}
-                    </td>
+                    <td>{patient.email || '—'}</td>
+                    <td>{patient.phone_number || '—'}</td>
                   </tr>
                 ))
               )}
@@ -582,7 +574,7 @@ const AppointmentsView = ({ onBookAppointment }) => {
   return (
     <section>
       <header>
-        <h1>My Appointments</h1>
+        <h1>Appointments</h1>
         {/* <button onClick={onBookAppointment}>
           <Plus size={20} /> Book New Appointment
         </button> */}
@@ -599,7 +591,7 @@ const AppointmentsView = ({ onBookAppointment }) => {
               <thead>
                 <tr>
                   <th>Doctor</th>
-                  <th>Patient</th>
+                  <th>initiated Patient</th>
                   <th>Department</th>
                   {/* <th>Date & Time</th> */}
                   <th>Reason</th>

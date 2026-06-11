@@ -58,15 +58,34 @@ class AdminSerializer(serializers.ModelSerializer):
 
 
 class DoctorSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='user.email', required=False)
+    specialty_name = serializers.CharField(source='specialty.name', read_only=True)
+
     class Meta:
         model = Doctor
         fields = '__all__'
 
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', None)
+        if user_data and 'email' in user_data:
+            instance.user.email = user_data['email']
+            instance.user.save(update_fields=['email'])
+        return super().update(instance, validated_data)
+
 
 class PatientSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=False, allow_null=True)
+
     class Meta:
         model = Patient
         fields = '__all__'
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Fall back to linked User email when Patient.email is empty
+        if not data.get('email') and instance.user_id:
+            data['email'] = instance.user.email
+        return data
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
@@ -76,6 +95,11 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = '__all__'
+        # patient/admin are set server-side for logged-in patients; admins send patient id
+        extra_kwargs = {
+            'patient': {'required': False},
+            'admin': {'required': False},
+        }
     
     def get_lab_report_url(self, obj):
         if obj.lab_report:
