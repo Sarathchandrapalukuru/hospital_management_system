@@ -142,7 +142,7 @@ function HomePage() {
             {/* <a href="#contact">Contact</a> */}
           </div>
           <div className="nav-actions">
-            <a href="tel:911" className="emergency-button">Emergency: 108</a>
+            <a href="tel:108" className="emergency-button">Emergency: 108</a>
             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="menu-toggle">
               <Menu size={24} />
             </button>
