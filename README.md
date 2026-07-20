@@ -59,7 +59,6 @@ cd backend
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-pip install razorpay
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
@@ -75,7 +74,7 @@ If `Activate.ps1` is blocked, run once (Current User):
 - **CORS** allows `http://localhost:3000` with credentials (`backend/myproject/settings.py`).
 - **Media uploads** (lab reports, prescriptions) are served under `/media/` when `DEBUG=True`.
 - **`requirements.txt` cleanup:** Remove the invalid lines `posts` and `stripe` before `pip install` if pip errors. There is no `posts` Django app in this repo—remove `'posts'` from `INSTALLED_APPS` in `backend/myproject/settings.py` if Django fails to start with `ModuleNotFoundError: No module named 'posts'`.
-- **`razorpay`:** The API views module imports Razorpay at startup; install it even if you are not using payment flows, or the server may fail to load URLs.
+
 
 ## Frontend setup
 
